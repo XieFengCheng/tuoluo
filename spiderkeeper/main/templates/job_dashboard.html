@@ -1,0 +1,123 @@
+
+{% extends "base.html" %}
+{% block content_header %}
+
+
+<h1>Job Dashboard</h1>
+<!-- <ol style="float: right;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    padding: 7px 5px;
+    position: absolute;
+    top: 15px;
+    right: 10px;">
+    <button type="button" class="btn btn-success btn-flat" style="margin-top: -10px;" data-toggle="modal"
+            data-target="#job-run-modal">RunOnce
+    </button>
+</ol> -->
+{% endblock %}
+{% block content_body %}
+
+<!--======running job======-->
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Running Jobs</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body table-responsive">
+        <table class="table table-striped">
+            <tr>
+                <th style="width: 10px">index</th>
+                <th style="width: 100px">server</th>
+                <th style="width: 100px">running</th>
+                <th style="width: 100px">finished</th>
+                <th style="width: 20px">pending</th>
+                <th style="width: 40px">node_name</th>
+                <th style="width: 120px">status</th>
+                <th style="width: 40px">Log</th>
+                <th style="width: 40px">Running On</th>
+            </tr>
+            {% for server in running %}
+            {% if running[server] != "bad" %}
+            <tr>
+                <td>{{ running[server]["index"] }}</td>
+                {% if running[server]['running'] > 0 %}
+                <td><a href="{{ url_for('main.listprojects', server=server) }}">{{ server }}</a></td>
+                <td class="" data-toggle="tooltip" data-placement="left" title="正在运行"><span class="label label-success">{{ running[server]['running'] }}</span></td>
+                {% else %}
+                <td>{{ server }}</td>
+                <td><span class="">{{ running[server]['running'] }}</span></td>
+                {% endif %}
+
+                {% if running[server]['finished'] > 0 %}
+                <td class="" data-toggle="tooltip" data-placement="left" title="已完成任务">{{ running[server]['finished'] }}</td>
+                {% else %}
+                <td>{{ running[server]['finished'] }}</td>
+                {% endif %}
+
+                {% if running[server]['pending'] > 0 %}
+                <td class="" data-toggle="tooltip" data-placement="left" title='即将运行爬虫数量'><span class="label label-info">{{ running[server]['pending'] }}</span></td>
+                {% else %}
+                <td>{{ running[server]['pending'] }}</td>
+                {% endif %}
+
+                <td>{{ running[server]['node_name'] }}</td>
+                <td><span class="label label-default">{{ running[server]['status'] }}</span></td>
+                <td>
+                    <a href="{{ url_for('main.logs', server=server) }}">{{ logs_num[server]['ip'] }}</a>
+                </td>
+                <td>centos</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<!--======completed job======-->
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Bad Jobs</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body table-responsive">
+        <table class="table table-striped">
+            <tr>
+                <th style="width: 10px">index</th>
+                <th style="width: 100px">server</th>
+                <th style="width: 100px">running</th>
+                <th style="width: 100px">finished</th>
+                <th style="width: 20px">pending</th>
+                <th style="width: 40px">node_name</th>
+                <th style="width: 120px">status</th>
+                <th style="width: 40px">Log</th>
+                <th style="width: 40px">Running On</th>
+            </tr>
+            {% for server in running %}
+            {% if running[server] == "bad" %}
+            <tr>
+                <td>{{ logs_num[server]["index"] }}</td>
+                <td>{{ server }}</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>{{ running[server]['node_name'] }}</td>
+                <td>bad</td>
+                <td>{{ logs_num[server]['ip'] }}</td>
+                <td>centos</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,24 @@
+
+{% extends "base.html" %}
+{% block content_header %}
+
+
+<h1>Scrapyd Log</h1>
+{% endblock %}
+{% block content_body %}
+<div id="frame_height">
+<iframe id ="flash" border="0" frameborder="0" scrolling="auto" width="100%" height="100%" src="{{ url }}"></iframe>
+</div>
+<script type="text/javascript">
+    var $height=window.innerHeight;
+    document.getElementById("frame_height").style.height=($height-140) + 'px' ;
+
+    // var ref_flag;
+    // var auto_time=1;
+    // window.clearInterval(ref_flag);
+    // ref_flag = window.setInterval(function(){
+    //     document.getElementById('frame_height').contentWindow.location.reload(true);
+    // }, auto_time * 5000);
+
+</script>
+{% endblock %}

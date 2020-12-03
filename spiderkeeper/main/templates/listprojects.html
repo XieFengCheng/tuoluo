@@ -1,0 +1,136 @@
+
+{% extends "base.html" %}
+{% block content_header %}
+
+
+<h1>{{ server }} Dashboard</h1>
+<ol style="float: right;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    padding: 7px 5px;
+    position: absolute;
+    top: 15px;
+    right: 10px;">
+    <button type="button" class="btn btn-success btn-flat" style="margin-top: -10px;" data-toggle="modal"
+            data-target="#job-run-modal">RunOnce
+    </button>
+</ol>
+{% endblock %}
+{% block content_body %}
+
+
+{% for spider in runnings %}
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">{{ spider }} Running Jobs</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body table-responsive">
+            <table class="table table-striped">
+                <tr>
+                    <th style="width: 30px">index</th>
+                    <th style="width: 80px">project</th>
+                    <th style="width: 160px">spiders <span class="fenge">|</span> handler</th>
+                    <th style="width: 160px">running <span class="fenge">|</span> handler</th>
+                    <th style="width: 100px">finished</th>
+                    <th style="width: 100px">pending</th>
+                    <th style="width: 100px">status</th>
+                    <th style="width: 100px">node_name</th>
+                </tr>
+                {% for project in runnings[spider]%}
+                <tr>
+                    <td>{{ runnings[spider][project]['index'] }}</td>
+                    {% if runnings[spider][project]['running'] > 0 or runnings[spider][project]['finished'] > 0 or runnings[spider][project]['pending'] > 0 %}
+                    <td><a href="{{ url_for('main.projectstatus', server=server, project=project) }}">{{ project }}</a></td>
+                    {% else %}
+                    <td>{{ project }}</td>
+                    {% endif %}
+
+                    <td>
+                        <a href=""  class="label label-warning" data-toggle="tooltip" data-placement="left" title="爬虫数量">{{ runnings[spider][project]['spider'] }}</a> <span class="fenge">|</span>
+                        <a href="{{ url_for('main.start', server=server, project=project) }}">Run All</a>
+                    </td>
+
+                    {% if runnings[spider][project]['running'] > 0 %}
+                    <td>
+                        <span data-toggle="tooltip" data-placement="left" title="正在运行" class="label label-success">
+                        {{ runnings[spider][project]['running'] }}</span>
+                        <span class="fenge">|</span>
+                        <a href="{{ url_for('main.close', server=server, project=project) }}">Close All</a>
+                    </td>
+                    {% else %}
+                    <td><span class="">{{ runnings[spider][project]['running'] }}</span></td>
+                    {% endif %}
+
+                    {% if runnings[spider][project]['finished'] > 0 %}
+                    <td class="" data-toggle="tooltip" data-placement="left" title="已完成任务"><span class="label label-danger">{{ runnings[spider][project]['finished'] }}</span></td>
+                    {% else %}
+                    <td>{{ runnings[spider][project]['finished'] }}</td>
+                    {% endif %}
+
+                    {% if runnings[spider][project]['pending'] > 0 %}
+                    <td class="" data-toggle="tooltip" data-placement="left" title='即将运行爬虫数量'><span class="label label-info">{{ runnings[spider][project]['pending'] }}</span></td>
+                    {% else %}
+                    <td><span>{{ runnings[spider][project]['pending'] }}</span></td>
+                    {% endif %}
+
+                    <td><span class="label label-default">{{ runnings[spider][project]['status'] }}</span></td>
+                    <td>{{ runnings[spider][project]['node_name'] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endfor %}
+
+
+
+<div class="modal fade" role="dialog" id="job-run-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{{ url_for('main.create', server=server) }}" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Run Spider Once</h4>
+                </div>
+
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Spider</label>
+                        <select class="form-control" name="spider_name">
+                            {% for spider in runnings %}
+                            {% for server in runnings[spider] %}
+                            <option value="{{ spider.spider_name }}">{{ server }}</option>
+                            {% endfor %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Country</label>
+                        <select class="form-control" name="priority">
+                            {% for enc, cnc in countrys.items() %}
+                            <option value="{{ enc }}">{{ cnc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+{% endblock %}

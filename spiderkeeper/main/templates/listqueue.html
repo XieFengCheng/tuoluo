@@ -1,0 +1,64 @@
+
+{% extends "base.html" %}
+{% block content_header %}
+
+
+<h1>{{ server }} Queue Dashboard</h1>
+
+{% endblock %}
+
+
+{% block content_body %}
+
+
+
+{% for q in queue %}
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">{{ q }}</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body table-responsive">
+            <table class="table table-striped">
+                <tr>
+                    {% for c in countrys %}
+                    <th style="width: 40px">{{ c }}</th>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for c in countrys %}
+                        {% if queue[q].get(c, 0) == 0 %}
+                        <td><span class=""> - </span></td>
+                        {% elif queue[q].get(c, 0) < 1000 %}
+                        <td><span class="label label-info">{{ queue[q].get(c, 0) }}</span></td>
+                        {% elif queue[q].get(c, 0) < 10000 %}
+                        <td><span class="label label-warning">{{ queue[q].get(c, 0) }}</span></td>
+                        {% elif queue[q].get(c, 0) < 100000 %}
+                        <td><span class="label label-danger">{{ queue[q].get(c, 0) }}</span></td>
+                        {% else %}
+                        <td><span class="label label-success">{{ queue[q].get(c, 0) }}</span></td>
+                        {% endif %}
+                    {% endfor%}
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endfor %}
+
+<script type="text/javascript">
+    
+    var ref_flag;
+    var auto_time = 1;
+    window.clearInterval(ref_flag);
+    ref_flag = window.setInterval(function(){
+        window.location.reload();
+    }, auto_time * 5000);
+
+</script>
+
+
+
+{% endblock %}

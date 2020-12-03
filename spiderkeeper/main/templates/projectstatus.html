@@ -1,0 +1,167 @@
+
+{% extends "base.html" %}
+{% block content_header %}
+
+
+<h1>{{ project }} Job Dashboard</h1>
+<ol style="float: right;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    padding: 7px 5px;
+    position: absolute;
+    top: 15px;
+    right: 10px;">
+    <button type="button" class="btn btn-success btn-flat" style="margin-top: -10px;" data-toggle="modal"
+            data-target="#job-run-modal">RunOnce
+    </button>
+</ol>
+{% endblock %}
+
+
+{% block content_body %}
+
+
+
+{% for status in status_infos %}
+{% if status_infos[status] | length > 0 %}
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">{{ status }}</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body table-responsive">
+            <table class="table table-striped">
+                {% if status_infos[status] | length > 0 %}
+                {% if status_infos[status][0].get('pid') %}
+                <tr>
+                    <th style="width: 100px">index</th>
+                    <th style="width: 160px">spider</th>
+                    <th style="width: 100px">start_time</th>
+                    <th style="width: 100px">pid</th>
+                    <th style="width: 160px">id</th>
+                    <th style="width: 100px">control</th>
+                </tr>
+                {% for dic in status_infos[status] %}
+                <tr>
+                    <td><span class="">{{ dic['index'] }}</span></td>
+                    <td>
+                        <span class="">
+                            <a href="{{ url_for('main.spider_log', server=server, project=project, spider=dic['spider'], sid=dic['id']) }}">
+                            {{ dic['spider'] }}</a>
+                        </span>
+                    </td>
+                    <td><span class="">{{ dic['start_time'] }}</span></td>
+                    <td><span class="">{{ dic['pid'] }}</span></td>
+                    <td><span class="">{{ dic['id'] }}</span></td>
+                    <td>
+                        <a href="{{ url_for('main.cancel', server=server, project=project, id=dic['id']) }}">
+                        <button type="button" class="btn btn-info btn-sm">
+                            end
+                        </button> 
+                        </a>
+                        <span class="fenge">|</span>
+                        <a href="{{ url_for('main.force_cancel', server=server, project=project, id=dic['id']) }}">
+                        <button type="button" class="btn btn-outline-danger btn-sm">
+                            forced end
+                        </button>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                {% elif status_infos[status][0].get('end_time') %}
+                <tr>
+                    <th style="width: 100px">index</th>
+                    <th style="width: 160px">spider</th>
+                    <th style="width: 100px">start_time</th>
+                    <th style="width: 100px">end_time</th>
+                    <th style="width: 100px">cost_time</th>
+                    <th style="width: 160px">id</th>
+                </tr>
+                {% for dic in status_infos[status] %}
+                <tr>
+                    <td><span class="">{{ dic['index'] }}</span></td>
+                    <td>
+                        <span class="">
+                            <a href="{{ url_for('main.spider_log', server=server, project=project, spider=dic['spider'], sid=dic['id']) }}">
+                            {{ dic['spider'] }}</a>
+                        </span>
+                    </td>
+                    <td><span class="">{{ dic['start_time'] }}</span></td>
+                    <td><span class="">{{ dic['end_time'] }}</span></td>
+                    <td><span class="">{{ dic['cost_time'] }}</span></td>
+                    <td><span class="">{{ dic['id'] }}</span></td>
+                </tr>
+                {% endfor %}
+
+                {% else %}
+                <tr>
+                    <th style="width: 100px">index</th>
+                    <th style="width: 160px">spider</th>
+                    <th style="width: 160px">id</th>
+                </tr>
+                {% for dic in status_infos[status] %}
+                <tr>
+                    <td><span class="">{{ dic['index'] }}</span></td>
+                    <td><span class="">{{ dic['spider'] }}</span></td>
+                    <td><span class="">{{ dic['id'] }}</span></td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+                {% endif %}
+            </table>
+        </div>
+    </div>
+{% endif %}
+{% endfor %}
+
+
+
+
+
+
+<div class="modal fade" role="dialog" id="job-run-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{{ url_for('main.create', server=server) }}" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Run Spider Once</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Spider</label>
+                        <select class="form-control" name="spider_name">
+                            <option value="{{ project }}">{{ project }}</option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Country</label>
+                        <select class="form-control" name="priority">
+                            {% for enc, cnc in countrys.items() %}
+                            <option value="{{ enc }}">{{ cnc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+{% endblock %}

@@ -1,0 +1,71 @@
+
+{% extends "base.html" %}
+{% block content_header %}
+
+
+<h1>Redis Dashboard</h1>
+
+{% endblock %}
+{% block content_body %}
+
+<!--======redis_num job======-->
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Redis Status</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body table-responsive">
+        <table class="table table-striped">
+            <tr>
+                <th style="width: 10px">index</th>
+                <th style="width: 130px">redis_key</th>
+                <th style="width: 160px">using(100)</th>
+                <th style="width: 160px">cleanout(10)</th>
+                <th style="width: 160px">server</th>
+                <th style="width: 20px">port</th>
+                <th style="width: 40px">db</th>
+            </tr>
+            {% for name in redis_num %}
+            <tr>
+                <td>{{ redis_num[name]["index"] }}</td>
+                {% if redis_num[name]['num'] == 0 %}
+                <td>{{ name }}</td>
+                {% else %}
+                <td><a href="{{ url_for('main.listqueue', server=name) }}">{{ name }}</a></td>
+                {% endif %}
+                <td><span class="label label-success" title="爬虫队列数量">{{ redis_num[name]['num'] }}</span></td>
+                <td><span class="label label-success" title="爬虫队列类型数量">{{ redis_num[name]['queue_num'] }}</span></td>
+                <td class="txt-args" data-toggle="tooltip" data-placement="right"title="">{{ redis_num[name]['ip'] }}</td>
+                <td><span class="label label-info">{{ redis_num[name]['port'] }}</span></td>
+                <td>{{ redis_num[name]['db'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+<div class="modal fade" role="dialog" id="job-run-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Run Spider Once</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+{% endblock %}
